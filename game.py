@@ -24,30 +24,17 @@ class Game:
     def __init__(self, button_pad: MatrixButtonLEDController):
         self.button_pad = button_pad
         self.button_pad.assign_button_events(self.when_pressed, self.when_held, self.when_released)
-
-        self.chosen_pair = []
-        self.chosen_button = None
-        self.waiting_for_pair = False
-        self.matched = [False for i in range(16)]
-        self.total = 0
-        print(self.matched)
-
         self.buttons: typing.List[ButtonInfo] = []
         self.sounds: typing.List[str] = []
         self.colors: typing.List[str] = []
         self.speaker = library.speaker.Speaker()
-        self.initialize_button_pad()
+        
         self.started = False
         self.play_game = True
         self.queue = queue.Queue()
 
-        self.button_pairs = [[None for i in range(2)] for i in range(8)]
-        self.button_numbers = [i for i in range(0, 16)]
-        for i in range(len(self.button_pairs)):
-            for j in range(len(self.button_pairs[i])):
-                self.button_pairs[i][j] = random.choice(self.button_numbers) + 1
-                self.button_numbers.remove(self.button_pairs[i][j] - 1)
-        self.randomize()
+        
+        self.reset()
         print(self.button_pairs)
 
     @property
@@ -121,10 +108,8 @@ class Game:
             if self.total >= 8:
                 print("You won.")
                 self.speaker.play_preloaded_wav("end_of_game", wait_until_done=True)
-                self.button_pad.clear_button_pad()
-                break
-
-            
+                self.reset()
+                
 
     def when_pressed(self, button):
         # TODO: this is called when a button is pressed. Add what you need to here
@@ -134,6 +119,19 @@ class Game:
 
     def when_held(self, button):
         # TODO: this is called when a button is held. Add what you need to here
+        if button.pin.info.number == 1:
+            self.speaker.play_preloaded_wav("gasp_x", wait_until_done=True)
+            self.reset()
+
+
+        elif button.pin.info.number == 2:
+            for i in range(len(self.button_pairs)):
+                for j in range(len(self.button_pairs[i])):
+                    each_button = self.button_pad.get_button(self.button_pairs[i][j])
+                    self.button_pad.set_button_led_color(each_button, self.colors[self.button_pairs.index(self.button_pairs[i])])
+            self.speaker.play_preloaded_wav("disconnect_x", wait_until_done=True)
+            self.reset()
+
 
         pass
 
@@ -142,7 +140,6 @@ class Game:
         pass
 
     def initialize_button_pad(self):
-        self.button_pad.clear_button_pad()
         # TODO: Set all buttons to a color, List of colors to choose from: https://github.com/waveform80/colorzero/blob/master/colorzero/tables.py#L315
         # sounds are available in the sounds directory
         self.sounds = [
@@ -155,20 +152,38 @@ class Game:
             "bloop_x",
             "car_horn_x",
         ]
+        random.shuffle(self.sounds)
         self.colors = [
             "blue",
             "green",
             "red",
-            "orangered",
+            "orangered", # yellow-orange
             "purple",
-            "grey",
-            "white",
-            "yellow",
+            "grey", # sky blue
+            "brown", # white-pink
+            "yellow", # lime
         ]
+        random.shuffle(self.colors)
         # TODO: assign to buttons
 
-    def randomize(self):
+    def reset(self):
+        self.initialize_button_pad()
 
+        self.button_pad.clear_button_pad()
+
+        self.chosen_pair = []
+        self.chosen_button = None
+        self.waiting_for_pair = False
+        self.matched = [False for i in range(16)]
+        self.total = 0
+        print(self.matched)
+
+        self.button_pairs = [[None for i in range(2)] for i in range(8)]
+        self.button_numbers = [i for i in range(0, 16)]
+        for i in range(len(self.button_pairs)):
+            for j in range(len(self.button_pairs[i])):
+                self.button_pairs[i][j] = random.choice(self.button_numbers) + 1
+                self.button_numbers.remove(self.button_pairs[i][j] - 1)
 
 
     def _start_game(self):
