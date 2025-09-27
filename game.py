@@ -26,8 +26,10 @@ class Game:
         self.button_pad.assign_button_events(self.when_pressed, self.when_held, self.when_released)
 
         self.chosen_pair = []
+        self.chosen_button = None
         self.waiting_for_pair = False
         self.matched = [False for i in range(16)]
+        self.total = 0
         print(self.matched)
 
         self.buttons: typing.List[ButtonInfo] = []
@@ -45,7 +47,7 @@ class Game:
             for j in range(len(self.button_pairs[i])):
                 self.button_pairs[i][j] = random.choice(self.button_numbers) + 1
                 self.button_numbers.remove(self.button_pairs[i][j] - 1)
-        
+        self.randomize()
         print(self.button_pairs)
 
     @property
@@ -77,9 +79,6 @@ class Game:
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
 
-            if self.matched[button_number - 1]:
-                continue
-
             for button_num_x in self.button_pairs:
                 print(button_num_x)
                 if button_number in button_num_x:
@@ -90,36 +89,46 @@ class Game:
 
                     
                     break
+
+            if self.matched[button_number - 1] or button == self.chosen_button:
+                continue
+
             if self.waiting_for_pair:
                 if button.pin.info.number in pair:
                     print("Matched!")
                     self.matched[button_number - 1] = True
                     self.matched[chosen_button_number - 1] = True
+                    self.speaker.play_preloaded_wav("correct_answer", wait_until_done=True)
+                    self.total += 1
                 else:
                     print("No Match!")
-                    self.button_pad.set_button_led_color(chosen_button, "black")
+                    self.button_pad.set_button_led_color(self.chosen_button, "black")
                     self.button_pad.set_button_led_color(button, "black")
+                    self.speaker.play_preloaded_wav("incorrect", wait_until_done=True)
                 self.waiting_for_pair = False
 
             else:
                 
-                chosen_button = button
+                self.chosen_button = button
                 chosen_button_number = button.pin.info.number
                 for pair in self.button_pairs:
                     if chosen_button_number in pair:
                         chosen_pair = pair
                         self.waiting_for_pair = True
-                        break # Play a sound when button is pressed
-            # TODO: check your game state, and update things
+                        break
+            
+
+            if self.total >= 8:
+                print("You won.")
+                self.speaker.play_preloaded_wav("end_of_game", wait_until_done=True)
+                self.button_pad.clear_button_pad()
+                break
+
+            
 
     def when_pressed(self, button):
         # TODO: this is called when a button is pressed. Add what you need to here
         _logger.info(f"Button {button.pin.info.number} pressed")
-
-        
-    
-        
-
 
         self.queue.put(button.pin.info.number)
 
@@ -150,13 +159,15 @@ class Game:
             "blue",
             "green",
             "red",
-            "orange",
+            "orangered",
             "purple",
             "grey",
-            "pink",
+            "white",
             "yellow",
         ]
         # TODO: assign to buttons
+
+    def randomize(self):
 
 
 
