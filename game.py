@@ -4,6 +4,7 @@ import threading
 import time
 import typing
 from dataclasses import dataclass
+import random
 
 import library
 from matrix_button_led_controller import MatrixButtonLEDController
@@ -31,6 +32,15 @@ class Game:
         self.started = False
         self.play_game = True
         self.queue = queue.Queue()
+
+        self.button_pairs = [[None for i in range(2)] for i in range(8)]
+        self.button_numbers = [i for i in range(0, 16)]
+        for i in range(len(self.button_pairs)):
+            for j in range(len(self.button_pairs[i])):
+                self.button_pairs[i][j] = random.choice(self.button_numbers) + 1
+                self.button_numbers.remove(self.button_pairs[i][j] - 1)
+        
+        print(self.button_pairs)
 
     @property
     def correct_sound(self):
@@ -90,6 +100,16 @@ class Game:
             "phone_pay",
             "bloop_x",
             "car_horn_x",
+        ]
+        self.colors = [
+            "blue"
+            "green"
+            "red"
+            "orange"
+            "purple"
+            "grey"
+            "violet"
+            "yellow"
         ]
         # TODO: assign to buttons
 
