@@ -24,6 +24,10 @@ class Game:
     def __init__(self, button_pad: MatrixButtonLEDController):
         self.button_pad = button_pad
         self.button_pad.assign_button_events(self.when_pressed, self.when_held, self.when_released)
+
+        self.chosen_pair = []
+        self.waiting_for_pair = False
+
         self.buttons: typing.List[ButtonInfo] = []
         self.sounds: typing.List[str] = []
         self.colors: typing.List[str] = []
@@ -71,16 +75,38 @@ class Game:
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
             self.button_pad.set_button_led_color(button, "red")
-            self.speaker.play_preloaded_wav("bloop_x", wait_until_done=True)  # Play a sound when button is pressed
+            for button_num_x in button_pairs:
+                if button_number in button_num_x:
+                    pair_num = button_num_x
+                    self.speaker.play_preloaded_wav(sounds[button_num_x ], wait_until_done=True)  # Play a sound when button is pressed
             # TODO: check your game state, and update things
 
     def when_pressed(self, button):
         # TODO: this is called when a button is pressed. Add what you need to here
         _logger.info(f"Button {button.pin.info.number} pressed")
+
+        if waiting_for_pair:
+            if button.pin.info.number in pair:
+                print("Matched!")
+                waiting_for_pair = False
+
+        else:
+            chosen_button = button
+            chosen_button_number = button.pin.info.number
+            for pair in button_pairs:
+                if chosen_button_number in pair:
+                    chosen_pair = pair
+                    waiting_for_pair = True
+                    break
+            
+        
+
+
         self.queue.put(button.pin.info.number)
 
     def when_held(self, button):
         # TODO: this is called when a button is held. Add what you need to here
+
         pass
 
     def when_released(self, button):
@@ -112,6 +138,8 @@ class Game:
             "yellow"
         ]
         # TODO: assign to buttons
+
+
 
     def _start_game(self):
         self.thread = threading.Thread(target=self._background_logic_checker)
