@@ -41,21 +41,21 @@ class Game:
     def correct_sound(self):
         """The sound that is played when player gets a pair"""
         # OPTIONAL: change this to a different sound if you want
-        self.speaker.play_preloaded_wav(self.sounds[1], wait_until_done=True)
+        self.speaker.play_preloaded_wav("correct_answer", wait_until_done=True)
         return "correct_answer"
 
     @property
     def incorrect_sound(self):
         """The sound that is played when player makes an incorrect guess"""
         # OPTIONAL: change this to a different sound if you want
-        self.speaker.play_preloaded_wav(self.sounds[4], wait_until_done=True)
+        self.speaker.play_preloaded_wav(self.sounds2[2], wait_until_done=True)
         return "incorrect"
 
     @property
     def end_of_game_sound(self):
         """The sound that is played when the game ends."""
         # OPTIONAL: change this to a different sound if you want
-        self.speaker.play_preloaded_wav(self.sounds[1], wait_until_done=True)
+        self.speaker.play_preloaded_wav(self.sounds2[2], wait_until_done=True)
         return "end_of_game"
 
     def _background_logic_checker(self):
@@ -76,8 +76,6 @@ class Game:
                     #print(self.colors)
                     self.button_pad.set_button_led_color(button, self.colors[self.button_pairs.index(button_num_x)])
                     self.speaker.play_preloaded_wav(self.sounds[self.button_pairs.index(button_num_x)], wait_until_done=True)
-
-                    
                     break
 
             if self.matched[button_number - 1] or button == self.chosen_button:
@@ -144,15 +142,16 @@ class Game:
         # TODO: Set all buttons to a color, List of colors to choose from: https://github.com/waveform80/colorzero/blob/master/colorzero/tables.py#L315
         # sounds are available in the sounds directory
         self.sounds = [
-            "ahem_x",
-            "car_horn_x",
+            "thunder2",
+            "fortnite",
             "baby_x",
             "slide_whistle_x",
-            "thunder2",
+            "trumbone",
             "bloop_x",
-            "jaw_harp",
-            "boing_x",
+            "netflix",
+            "oof",
         ]
+
         random.shuffle(self.sounds)
         self.colors = [
             "blue",
