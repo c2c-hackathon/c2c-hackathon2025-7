@@ -74,31 +74,38 @@ class Game:
 
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
-            self.button_pad.set_button_led_color(button, "red")
-            for button_num_x in button_pairs:
+           
+            for button_num_x in self.button_pairs:
+                print(button_num_x)
                 if button_number in button_num_x:
-                    pair_num = button_num_x
-                    self.speaker.play_preloaded_wav(sounds[button_num_x ], wait_until_done=True)  # Play a sound when button is pressed
+                    print(self.button_pairs.index(button_num_x))
+                    print(self.colors)
+                    self.button_pad.set_button_led_color(button, self.colors[self.button_pairs.index(button_num_x)])
+                    self.speaker.play_preloaded_wav(self.sounds[self.button_pairs.index(button_num_x)], wait_until_done=True)
+
+                    
+                    break
+            if self.waiting_for_pair:
+                if button.pin.info.number in pair:
+                    print("Matched!")
+                    self.waiting_for_pair = False
+
+            else:
+                chosen_button = button
+                chosen_button_number = button.pin.info.number
+            for pair in self.button_pairs:
+                if chosen_button_number in pair:
+                    chosen_pair = pair
+                    self.waiting_for_pair = True
+                    break # Play a sound when button is pressed
             # TODO: check your game state, and update things
 
     def when_pressed(self, button):
         # TODO: this is called when a button is pressed. Add what you need to here
         _logger.info(f"Button {button.pin.info.number} pressed")
 
-        if waiting_for_pair:
-            if button.pin.info.number in pair:
-                print("Matched!")
-                waiting_for_pair = False
-
-        else:
-            chosen_button = button
-            chosen_button_number = button.pin.info.number
-            for pair in button_pairs:
-                if chosen_button_number in pair:
-                    chosen_pair = pair
-                    waiting_for_pair = True
-                    break
-            
+        
+    
         
 
 
@@ -128,14 +135,14 @@ class Game:
             "car_horn_x",
         ]
         self.colors = [
-            "blue"
-            "green"
-            "red"
-            "orange"
-            "purple"
-            "grey"
-            "violet"
-            "yellow"
+            "blue",
+            "green",
+            "red",
+            "orange",
+            "purple",
+            "grey",
+            "pink",
+            "yellow",
         ]
         # TODO: assign to buttons
 
