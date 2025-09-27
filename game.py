@@ -52,6 +52,7 @@ class Game:
     @property
     def end_of_game_sound(self):
         """The sound that is played when the game ends."""
+
         # OPTIONAL: change this to a different sound if you want
         return "end_of_game"
 
@@ -147,10 +148,10 @@ class Game:
             "fart_z",
             "baby_x",
             "slide_whistle_x",
-            "arrow2",
             "phone_pay",
             "bloop_x",
             "car_horn_x",
+            "oof",
         ]
         random.shuffle(self.sounds)
         self.colors = [
