@@ -41,19 +41,21 @@ class Game:
     def correct_sound(self):
         """The sound that is played when player gets a pair"""
         # OPTIONAL: change this to a different sound if you want
+        self.speaker.play_preloaded_wav(self.sounds[1], wait_until_done=True)
         return "correct_answer"
 
     @property
     def incorrect_sound(self):
         """The sound that is played when player makes an incorrect guess"""
         # OPTIONAL: change this to a different sound if you want
+        self.speaker.play_preloaded_wav(self.sounds[4], wait_until_done=True)
         return "incorrect"
 
     @property
     def end_of_game_sound(self):
         """The sound that is played when the game ends."""
-
         # OPTIONAL: change this to a different sound if you want
+        self.speaker.play_preloaded_wav(self.sounds[1], wait_until_done=True)
         return "end_of_game"
 
     def _background_logic_checker(self):
@@ -145,12 +147,12 @@ class Game:
         # sounds are available in the sounds directory
         self.sounds = [
             "thunder2",
-            "fart_z",
+            "fortnite",
             "baby_x",
             "slide_whistle_x",
-            "phone_pay",
+            "trumbone",
             "bloop_x",
-            "car_horn_x",
+            "netflix",
             "oof",
         ]
         random.shuffle(self.sounds)
@@ -192,6 +194,8 @@ class Game:
         self.thread.start()
         # TODO: play a sound to start the game
         self.started = True
+        self.speaker.play_preloaded_wav(self.sounds[6], wait_until_done=True)
+        
 
     def play(self):
         self._start_game()
