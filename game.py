@@ -27,6 +27,8 @@ class Game:
 
         self.chosen_pair = []
         self.waiting_for_pair = False
+        self.matched = [False for i in range(16)]
+        print(self.matched)
 
         self.buttons: typing.List[ButtonInfo] = []
         self.sounds: typing.List[str] = []
@@ -74,7 +76,10 @@ class Game:
 
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
-           
+
+            if self.matched[button_number - 1]:
+                continue
+
             for button_num_x in self.button_pairs:
                 print(button_num_x)
                 if button_number in button_num_x:
@@ -88,16 +93,23 @@ class Game:
             if self.waiting_for_pair:
                 if button.pin.info.number in pair:
                     print("Matched!")
-                    self.waiting_for_pair = False
+                    self.matched[button_number - 1] = True
+                    self.matched[chosen_button_number - 1] = True
+                else:
+                    print("No Match!")
+                    self.button_pad.set_button_led_color(chosen_button, "black")
+                    self.button_pad.set_button_led_color(button, "black")
+                self.waiting_for_pair = False
 
             else:
+                
                 chosen_button = button
                 chosen_button_number = button.pin.info.number
-            for pair in self.button_pairs:
-                if chosen_button_number in pair:
-                    chosen_pair = pair
-                    self.waiting_for_pair = True
-                    break # Play a sound when button is pressed
+                for pair in self.button_pairs:
+                    if chosen_button_number in pair:
+                        chosen_pair = pair
+                        self.waiting_for_pair = True
+                        break # Play a sound when button is pressed
             # TODO: check your game state, and update things
 
     def when_pressed(self, button):
