@@ -64,16 +64,16 @@ class Game:
             if self.queue.empty():
                 continue
             button_number = self.queue.get()
-            print(f"Handling button {button_number}")
+            #print(f"Handling button {button_number}")
 
             # Example logic: light up the button that was pressed with a constant color
             button = self.button_pad.get_button(button_number)
 
             for button_num_x in self.button_pairs:
-                print(button_num_x)
+                #print(button_num_x)
                 if button_number in button_num_x:
-                    print(self.button_pairs.index(button_num_x))
-                    print(self.colors)
+                    #print(self.button_pairs.index(button_num_x))
+                    #print(self.colors)
                     self.button_pad.set_button_led_color(button, self.colors[self.button_pairs.index(button_num_x)])
                     self.speaker.play_preloaded_wav(self.sounds[self.button_pairs.index(button_num_x)], wait_until_done=True)
 
@@ -85,13 +85,13 @@ class Game:
 
             if self.waiting_for_pair:
                 if button.pin.info.number in pair:
-                    print("Matched!")
+                    #print("Matched!")
                     self.matched[button_number - 1] = True
                     self.matched[chosen_button_number - 1] = True
                     self.speaker.play_preloaded_wav("correct_answer", wait_until_done=True)
                     self.total += 1
                 else:
-                    print("No Match!")
+                    #print("No Match!")
                     self.button_pad.set_button_led_color(self.chosen_button, "black")
                     self.button_pad.set_button_led_color(button, "black")
                     self.speaker.play_preloaded_wav("incorrect", wait_until_done=True)
@@ -109,8 +109,9 @@ class Game:
             
 
             if self.total >= 8:
-                print("You won.")
-                self.speaker.play_preloaded_wav("end_of_game", wait_until_done=True)
+                #print("You won.")
+                self.speaker.play_preloaded_wav("fortnite", wait_until_done=False)
+                self.blink()
                 self.reset()
                 
 
@@ -123,17 +124,14 @@ class Game:
     def when_held(self, button):
         # TODO: this is called when a button is held. Add what you need to here
         if button.pin.info.number == 1:
-            self.speaker.play_preloaded_wav("gasp_x", wait_until_done=True)
-            self.reset()
+            self.speaker.play_preloaded_wav("oof", wait_until_done=True)
 
 
         elif button.pin.info.number == 2:
-            for i in range(len(self.button_pairs)):
-                for j in range(len(self.button_pairs[i])):
-                    each_button = self.button_pad.get_button(self.button_pairs[i][j])
-                    self.button_pad.set_button_led_color(each_button, self.colors[self.button_pairs.index(self.button_pairs[i])])
-            self.speaker.play_preloaded_wav("disconnect_x", wait_until_done=True)
-            self.reset()
+            self.speaker.play_preloaded_wav("trombone", wait_until_done=False)
+            blink()
+        
+        self.reset()
 
 
         pass
@@ -146,14 +144,14 @@ class Game:
         # TODO: Set all buttons to a color, List of colors to choose from: https://github.com/waveform80/colorzero/blob/master/colorzero/tables.py#L315
         # sounds are available in the sounds directory
         self.sounds = [
-            "thunder2",
-            "fortnite",
+            "ahem_x",
+            "car_horn_x",
             "baby_x",
             "slide_whistle_x",
-            "trumbone",
+            "thunder2",
             "bloop_x",
-            "netflix",
-            "oof",
+            "jaw_harp",
+            "boing_x",
         ]
         random.shuffle(self.sounds)
         self.colors = [
@@ -179,7 +177,7 @@ class Game:
         self.waiting_for_pair = False
         self.matched = [False for i in range(16)]
         self.total = 0
-        print(self.matched)
+        #print(self.matched)
 
         self.button_pairs = [[None for i in range(2)] for i in range(8)]
         self.button_numbers = [i for i in range(0, 16)]
@@ -188,15 +186,27 @@ class Game:
                 self.button_pairs[i][j] = random.choice(self.button_numbers) + 1
                 self.button_numbers.remove(self.button_pairs[i][j] - 1)
         
-        self.speaker.play_preloaded_wav("car_horn_x", wait_until_done=True)
+        self.speaker.play_preloaded_wav("netflix", wait_until_done=False)
 
+    def blink():
+        for k in range(10):
+            for i in range(len(self.button_pairs)):
+                for j in range(len(self.button_pairs[i])):
+                    each_button = self.button_pad.get_button(self.button_pairs[i][j])
+                    self.button_pad.set_button_led_color(each_button, self.colors[self.button_pairs.index(self.button_pairs[i])])
+            time.sleep(0.25)
+            for i in range(len(self.button_pairs)):
+                for j in range(len(self.button_pairs[i])):
+                    each_button = self.button_pad.get_button(self.button_pairs[i][j])
+                    self.button_pad.set_button_led_color(each_button, "black")
+            time.sleep(0.25)
 
     def _start_game(self):
         self.thread = threading.Thread(target=self._background_logic_checker)
         self.thread.start()
         # TODO: play a sound to start the game
         self.started = True
-        self.speaker.play_preloaded_wav(self.sounds[6], wait_until_done=True)
+        #self.speaker.play_preloaded_wav(self.sounds[6], wait_until_done=True)
         
 
     def play(self):
@@ -209,7 +219,6 @@ class Game:
             self.play_game = False
             self.thread.join()
             self.button_pad.cleanup()
-
 
 def _main():
     button_pad = MatrixButtonLEDController(
