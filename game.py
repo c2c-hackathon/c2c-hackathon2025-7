@@ -187,6 +187,8 @@ class Game:
             for j in range(len(self.button_pairs[i])):
                 self.button_pairs[i][j] = random.choice(self.button_numbers) + 1
                 self.button_numbers.remove(self.button_pairs[i][j] - 1)
+        
+        self.speaker.play_preloaded_wav("car_horn_x", wait_until_done=True)
 
 
     def _start_game(self):
