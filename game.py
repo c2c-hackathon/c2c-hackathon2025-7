@@ -127,7 +127,7 @@ class Game:
 
         elif button.pin.info.number == 2:
             self.speaker.play_preloaded_wav("trombone", wait_until_done=False)
-            blink()
+            self.blink()
         
         self.reset()
 
@@ -146,7 +146,7 @@ class Game:
             "fortnite",
             "baby_x",
             "slide_whistle_x",
-            "trumbone",
+            "trombone",
             "bloop_x",
             "netflix",
             "oof",
