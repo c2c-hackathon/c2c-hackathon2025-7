@@ -78,14 +78,14 @@ class Game:
                     self.speaker.play_preloaded_wav(self.sounds[self.button_pairs.index(button_num_x)], wait_until_done=True)
                     break
 
-            if self.matched[button_number - 1] or button == self.chosen_button:
+            if self.matched[button_number - 1] or button_number == self.chosen_button_number:
                 continue
 
             if self.waiting_for_pair:
                 if button.pin.info.number in pair:
                     #print("Matched!")
                     self.matched[button_number - 1] = True
-                    self.matched[chosen_button_number - 1] = True
+                    self.matched[self.chosen_button_number - 1] = True
                     self.speaker.play_preloaded_wav("correct_answer", wait_until_done=True)
                     self.total += 1
                 else:
@@ -98,9 +98,9 @@ class Game:
             else:
                 
                 self.chosen_button = button
-                chosen_button_number = button.pin.info.number
+                self.chosen_button_number = button.pin.info.number
                 for pair in self.button_pairs:
-                    if chosen_button_number in pair:
+                    if self.chosen_button_number in pair:
                         chosen_pair = pair
                         self.waiting_for_pair = True
                         break
@@ -172,6 +172,7 @@ class Game:
         self.button_pad.clear_button_pad()
 
         self.chosen_pair = []
+        self.chosen_button_number = -1
         self.chosen_button = None
         self.waiting_for_pair = False
         self.matched = [False for i in range(16)]
@@ -187,7 +188,7 @@ class Game:
         
         self.speaker.play_preloaded_wav("netflix", wait_until_done=False)
 
-    def blink():
+    def blink(self):
         for k in range(10):
             for i in range(len(self.button_pairs)):
                 for j in range(len(self.button_pairs[i])):
