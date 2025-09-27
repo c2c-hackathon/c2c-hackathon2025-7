@@ -108,7 +108,7 @@ class Game:
 
             if self.total >= 8:
                 #print("You won.")
-                self.speaker.play_preloaded_wav("fortnite", wait_until_done=False)
+                self.speaker.play_preloaded_wav("end_of_game", wait_until_done=False)
                 self.blink()
                 self.reset()
                 
@@ -142,14 +142,14 @@ class Game:
         # TODO: Set all buttons to a color, List of colors to choose from: https://github.com/waveform80/colorzero/blob/master/colorzero/tables.py#L315
         # sounds are available in the sounds directory
         self.sounds = [
-            "thunder2",
+            "doorbell_x",
             "fortnite",
-            "baby_x",
-            "slide_whistle_x",
-            "trombone",
-            "bloop_x",
+            "hehehaha",
+            "mario",
             "netflix",
-            "oof",
+            "bloop_x",
+            "jaw_harp",
+            "gasp_x",
         ]
 
         random.shuffle(self.sounds)
@@ -186,7 +186,7 @@ class Game:
                 self.button_pairs[i][j] = random.choice(self.button_numbers) + 1
                 self.button_numbers.remove(self.button_pairs[i][j] - 1)
         
-        self.speaker.play_preloaded_wav("netflix", wait_until_done=False)
+        self.speaker.play_preloaded_wav("pacman", wait_until_done=False)
 
     def blink(self):
         for k in range(10):
